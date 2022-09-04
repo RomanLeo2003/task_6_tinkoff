@@ -1,0 +1,1 @@
+# Task-6-for-Tinkoff-s-deep-learning-course
