@@ -7,16 +7,20 @@ import torch.nn.functional as F
 import numpy as np
 import argparse
 parser = argparse.ArgumentParser(description='Train.py')
-parser.add_argument('--input-dir', type=str, help='Input dir for text')
+parser.add_argument('--input-dir', type=str, help='Input dir for text', default='stdin')
 parser.add_argument('--model', type=str, help='Input dir for saving model')
 args = parser.parse_args()
 
-text_file = args.input_dir
+inp = args.input_dir
+
 
 class Vectorizer:
-    def __init__(self, file_path):
-        with open(file_path, encoding='utf-8') as text_file:
-            self.text_sample = ' '.join(text_file.readlines())
+    def __init__(self, inp):
+        if inp == 'stdin':
+            self.text_sample = input()
+        else:
+            with open(inp, encoding='utf-8') as text_file:
+                self.text_sample = ' '.join(text_file.readlines())
 
     @staticmethod
     def __preprocess_text(text):
@@ -39,7 +43,7 @@ class Vectorizer:
         return sequence, char_to_idx, idx_to_char
 
 
-vectorizer = Vectorizer(text_file)
+vectorizer = Vectorizer(inp)
 
 sequence, char_to_idx, idx_to_char = vectorizer.text_to_seq()
 
