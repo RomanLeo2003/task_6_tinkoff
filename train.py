@@ -24,7 +24,7 @@ class Vectorizer:
     @staticmethod
     def __preprocess_text(text):
         text = text.lower()
-        text = re.sub(r"([/.,!?№#@&—;()])", r" \1 ", text)
+        text = re.sub(r"([/.,!?№#@&«»()„“—;:-])", r"", text)
         return text
 
 
