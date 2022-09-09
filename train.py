@@ -143,7 +143,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 model = Model(sequence, char_to_idx, idx_to_char, input_size=len(idx_to_char), hidden_size=256, embedding_size=128, n_layers=3)
 model.to(device)
 
-model.fit(epochs=50,
+model.fit(epochs=5000,
           criterion=nn.CrossEntropyLoss(),
           optimizer=torch.optim.Adam(model.parameters(), lr=1e-2, amsgrad=True),
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
