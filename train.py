@@ -21,7 +21,6 @@ class Vectorizer:
         else:
             with open(inp, encoding='utf-8') as text_file:
                 self.text_sample = ' '.join(text_file.readlines())
-
     @staticmethod
     def __preprocess_text(text):
         text = text.lower()
@@ -49,9 +48,12 @@ sequence, char_to_idx, idx_to_char = vectorizer.text_to_seq()
 
 class Model(nn.Module):
 
-    def __init__(self, input_size, hidden_size, embedding_size, n_layers=1):
+    def __init__(self, seq, char_to_idx, idx_to_char, input_size, hidden_size, embedding_size, n_layers=1):
         super(Model, self).__init__()
 
+        self.sequence = seq
+        self.char_to_idx = char_to_idx
+        self.idx_to_char = idx_to_char
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.embedding_size = embedding_size
@@ -91,7 +93,7 @@ class Model(nn.Module):
 
         for epoch in range(epochs):
             self.train()
-            train, target = self.get_batch(sequence, batch_size=batch_size)
+            train, target = self.get_batch(self.sequence, batch_size=batch_size)
             train = train.permute(1, 0, 2).to(device)
             target = target.permute(1, 0, 2).to(device)
             hidden = self.init_hidden(batch_size)
@@ -113,11 +115,11 @@ class Model(nn.Module):
 
         self.eval()
 
-    def generate(self, char_to_idx, idx_to_char, start_text=' ', prediction_len=200, temp=0.3):
+    def generate(self, start_text=' ', prediction_len=200, temp=0.3):
 
 
         hidden = self.init_hidden()
-        idx_input = [char_to_idx[char] for char in start_text]
+        idx_input = [self.char_to_idx[char] for char in start_text]
         train = torch.LongTensor(idx_input).view(-1, 1, 1).to(device)
         predicted_text = start_text
 
@@ -129,16 +131,16 @@ class Model(nn.Module):
             output, hidden = self(inp.to(device), hidden)
             output_logits = output.cpu().data.view(-1)
             p_next = F.softmax(output_logits / temp, dim=-1).detach().cpu().data.numpy()
-            top_index = np.random.choice(len(char_to_idx), p=p_next)
+            top_index = np.random.choice(len(self.char_to_idx), p=p_next)
             inp = torch.LongTensor([top_index]).view(-1, 1, 1).to(device)
-            predicted_char = idx_to_char[top_index]
+            predicted_char = self.idx_to_char[top_index]
             predicted_text += predicted_char
 
         return predicted_text
 
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-model = Model(input_size=len(idx_to_char), hidden_size=256, embedding_size=128, n_layers=3)
+model = Model(sequence, char_to_idx, idx_to_char, input_size=len(idx_to_char), hidden_size=256, embedding_size=128, n_layers=3)
 model.to(device)
 
 model.fit(epochs=50,
@@ -153,6 +155,9 @@ model.fit(epochs=50,
 
 with open(args.model, 'wb') as file:
     pickle.dump(model, file)
+
+
+
 
 
 
