@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 import argparse
 
-parser = argparse.ArgumentParser(description='Train.py')
+parser = argparse.ArgumentParser(description='Generate.py')
 parser.add_argument('--model', type=str, help='Dir for model pickle file')
 parser.add_argument('--prefix', type=str, help='Start-word')
 parser.add_argument('--length', type=int, help='Len of generate text')
