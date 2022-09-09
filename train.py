@@ -140,7 +140,7 @@ class Model(nn.Module):
 
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-model = Model(sequence, char_to_idx, idx_to_char, input_size=len(idx_to_char), hidden_size=256, embedding_size=128, n_layers=3)
+model = Model(sequence, char_to_idx, idx_to_char, input_size=len(idx_to_char), hidden_size=128, embedding_size=128, n_layers=3)
 model.to(device)
 
 model.fit(epochs=5000,
