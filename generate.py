@@ -1,6 +1,6 @@
 import pickle
 import argparse
-from train import Model
+
 
 parser = argparse.ArgumentParser(description='Generate.py')
 parser.add_argument('--model', type=str, help='Dir for model pickle file')
